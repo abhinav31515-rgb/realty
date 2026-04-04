@@ -6,6 +6,7 @@ import Login from '../components/auth/Login.vue';
 import AdminDashboard from '../components/dashboard/AdminDashboard.vue';
 import AgentDashboard from '../components/dashboard/AgentDashboard.vue';
 import CustomerDashboard from '../components/dashboard/CustomerDashboard.vue';
+import AdminContentManager from '../components/cms/AdminContentManager.vue';
 
 const routes = [
     { path: '/', name: 'home', component: LandingPage },
@@ -15,6 +16,11 @@ const routes = [
     { path: '/admin', name: 'admin-dashboard', component: AdminDashboard },
     { path: '/agent', name: 'agent-dashboard', component: AgentDashboard },
     { path: '/dashboard', name: 'customer-dashboard', component: CustomerDashboard }
+    },
+    {
+        path: '/admin/content',
+        name: 'admin-content',
+        component: AdminContentManager
 ];
 
 export default createRouter({
