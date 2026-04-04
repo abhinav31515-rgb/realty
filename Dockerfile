@@ -9,11 +9,13 @@ RUN apk add --no-cache \
     zip \
     unzip \
     git \
-    postgresql-dev
+    postgresql-dev \
+    oniguruma-dev
 
-RUN docker-php-ext-install pdo_pgsql pgsql bcmath gd
+RUN docker-php-ext-install pdo_pgsql pgsql bcmath gd mbstring
 
-RUN mkdir -p /run/nginx
+# Create necessary directories for Nginx and Supervisor
+RUN mkdir -p /run/nginx /var/log/supervisor /var/log/nginx
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -24,7 +26,8 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+# Note: We use the full path for config in start.sh
+COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
 RUN chmod +x /var/www/start.sh
