@@ -9,6 +9,7 @@ import CustomerDashboard from '../components/dashboard/CustomerDashboard.vue';
 import AdminContentManager from '../components/cms/AdminContentManager.vue';
 import PropertySubmission from '../components/property/PropertySubmission.vue';
 import AdminModeration from '../components/dashboard/AdminModeration.vue';
+import CompareView from '../components/property/CompareView.vue';
 
 const routes = [
     { path: '/', name: 'home', component: LandingPage },
@@ -21,6 +22,11 @@ const routes = [
     { path: '/admin/content', name: 'admin-content', component: AdminContentManager },
     { path: '/list-property', name: 'list-property', component: PropertySubmission },
     { path: '/admin/moderation', name: 'admin-moderation', component: AdminModeration }
+    },
+    {
+        path: '/compare',
+        name: 'compare',
+        component: CompareView
 ];
 
 export default createRouter({

@@ -1,9 +1,14 @@
 <template>
   <div class="group cursor-pointer relative" :class="asymmetric ? 'md:mt-24' : ''">
-    <!-- Favorite Toggle -->
-    <button @click.stop="toggleFavorite" class="absolute top-6 right-6 z-10 w-10 h-10 bg-white/90 backdrop-blur-md flex items-center justify-center transition-all hover:bg-gold hover:text-white">
-       <span class="material-symbols-outlined text-[20px]" :class="isFavorited ? 'fill-1' : ''">{{ isFavorited ? 'favorite' : 'favorite' }}</span>
-    </button>
+    <!-- Action Icons -->
+    <div class="absolute top-6 right-6 z-10 flex flex-col space-y-2">
+      <button @click.stop="toggleFavorite" class="w-10 h-10 bg-white/90 backdrop-blur-md flex items-center justify-center transition-all hover:bg-gold hover:text-white">
+         <span class="material-symbols-outlined text-[20px]" :class="isFavorited ? 'fill-1' : ''">favorite</span>
+      </button>
+      <button @click.stop="addToCompare" class="w-10 h-10 bg-white/90 backdrop-blur-md flex items-center justify-center transition-all hover:bg-gold hover:text-white">
+         <span class="material-symbols-outlined text-[20px]">compare_arrows</span>
+      </button>
+    </div>
 
     <div @click="goToDetail" class="aspect-[4/5] overflow-hidden mb-6">
       <img :src="image" :alt="title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
@@ -29,23 +34,30 @@ const props = defineProps({
   location: String,
   price: Number,
   image: String,
-  asymmetric: Boolean
+  asymmetric: Boolean,
+  type: String,
+  area: Number,
+  bhk: Number
 });
 
 const router = useRouter();
 const isFavorited = ref(false);
 
 const goToDetail = () => {
+    // Record click for analytics
+    axios.post(`/api/properties/${props.id}/click`);
     if (props.id) router.push({ name: 'property-detail', params: { id: props.id } });
+};
+
+const addToCompare = () => {
+  window.dispatchEvent(new CustomEvent('add-to-compare', { 
+    detail: { ...props } 
+  }));
 };
 
 const toggleFavorite = async () => {
   const token = localStorage.getItem('auth_token');
-  if (!token) {
-    router.push({ name: 'login' });
-    return;
-  }
-  
+  if (!token) { router.push({ name: 'login' }); return; }
   try {
     if (isFavorited.value) {
       await axios.delete(`/api/favorites/${props.id}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -54,9 +66,7 @@ const toggleFavorite = async () => {
       await axios.post('/api/favorites', { property_id: props.id }, { headers: { Authorization: `Bearer ${token}` } });
       isFavorited.value = true;
     }
-  } catch (error) {
-    console.error('Error toggling favorite:', error);
-  }
+  } catch (error) { console.error(error); }
 };
 </script>
 

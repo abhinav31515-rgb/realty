@@ -83,3 +83,9 @@ class PropertyController extends Controller
         return response()->json(['message' => 'Deleted']);
     }
 }
+
+    public function incrementClick(Property $property)
+    {
+        $property->increment('clicks_count');
+        return response()->json(['success' => true]);
+    }
