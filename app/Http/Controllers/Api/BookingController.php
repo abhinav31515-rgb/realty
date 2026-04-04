@@ -43,6 +43,7 @@ class BookingController extends Controller
 
         // Real-time notification to Agent via Supabase
         $this->notifySupabase($property->owner_id, "New showing request for " . $property->title, "booking");
+        Mail::to($booking->agent->email)->send(new ShowingRequestedMail($booking));
 
         return response()->json($booking, 201);
     }
@@ -78,6 +79,7 @@ class BookingController extends Controller
 
         // Real-time notification to Customer
         $this->notifySupabase($booking->customer_id, "Your showing for " . $booking->property->title . " is " . $request->status, "status_update");
+        Mail::to($booking->agent->email)->send(new ShowingRequestedMail($booking));
 
         return response()->json($booking);
     }

@@ -9,6 +9,7 @@ class AuthController extends Controller {
     public function register(Request $request) {
         $request->validate(['name' => 'required|string|max:255', 'email' => 'required|string|email|max:255|unique:users', 'password' => 'required|string|min:8', 'role' => 'string|in:admin,agent,customer']);
         $user = User::create(['name' => $request->name, 'email' => $request->email, 'password' => Hash::make($request->password), 'role' => $request->role ?? 'customer']);
+        Mail::to($user->email)->send(new WelcomeLuxuryMail($user));
         return response()->json(['user' => $user, 'token' => $user->createToken('auth_token')->plainTextToken]);
     }
     public function login(Request $request) {
