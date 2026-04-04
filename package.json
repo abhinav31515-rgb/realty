@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "@supabase/supabase-js": "^2.101.1",
+        "mapbox-gl": "^3.21.0",
         "vue-router": "^5.0.4"
     }
 }
