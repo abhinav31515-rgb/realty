@@ -13,6 +13,8 @@ RUN apk add --no-cache \
 
 RUN docker-php-ext-install pdo_pgsql pgsql bcmath gd
 
+RUN mkdir -p /run/nginx
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
@@ -25,6 +27,8 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
-EXPOSE 10000
+RUN chmod +x /var/www/start.sh
+
+EXPOSE 80
 
 CMD ["/var/www/start.sh"]

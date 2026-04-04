@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# Run migrations
+echo "Running migrations..."
 php artisan migrate --force
 
-# Seed if needed (you might want to control this via env)
 if [ "$RUN_SEEDER" = "true" ]; then
+    echo "Seeding database..."
     php artisan db:seed --force
 fi
 
-# Start supervisor
+echo "Starting Supervisor..."
 /usr/bin/supervisord -c /etc/supervisord.conf
