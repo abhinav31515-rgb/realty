@@ -18,6 +18,9 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET'),
+    ],
     'supabase' => [
         'url' => env('SUPABASE_URL'),
         'key' => env('SUPABASE_ANON_KEY'),
