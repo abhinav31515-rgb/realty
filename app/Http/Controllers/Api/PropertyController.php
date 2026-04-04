@@ -25,6 +25,9 @@ class PropertyController extends Controller
         if ($request->has('max_price')) {
             $query->where('price', '<=', $request->max_price);
         }
+        if ($request->has('category')) {
+            $query->where('listing_category', $request->category);
+        }
 
         return response()->json($query->paginate(15));
     }
@@ -37,25 +40,45 @@ class PropertyController extends Controller
             'type' => 'required|string',
             'location' => 'required|string',
             'price' => 'required|numeric',
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120', // 5MB max for high-res
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:10240', // 10MB max
             'metadata' => 'array',
             'is_featured' => 'boolean',
+            'listing_category' => 'string',
+            'bhk_count' => 'integer',
+            'total_area' => 'numeric',
+            'furnishing_status' => 'string',
+            'possession_status' => 'string',
         ]);
 
+        $disk = $this->getAvailableDisk();
         $imagePaths = [];
+        
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                // In production, this would use 's3' or 'cloudinary' driver
-                $path = $image->store('properties', 'public');
-                $imagePaths[] = Storage::disk('public')->url($path);
+                $path = $image->store('properties', $disk);
+                $imagePaths[] = Storage::disk($disk)->url($path);
             }
         }
 
         $validated['images'] = $imagePaths;
         $validated['owner_id'] = $request->user()->id;
+        $validated['status'] = 'pending';
 
         $property = Property::create($validated);
         return response()->json($property, 201);
+    }
+
+    private function getAvailableDisk()
+    {
+        if (config('filesystems.disks.s3.key') && config('filesystems.disks.s3.secret')) {
+            return 's3';
+        }
+
+        if (config('filesystems.disks.supabase.key') && config('filesystems.disks.supabase.secret')) {
+            return 'supabase';
+        }
+
+        return 'public';
     }
 
     public function show(Property $property)
@@ -82,10 +105,10 @@ class PropertyController extends Controller
         $property->delete();
         return response()->json(['message' => 'Deleted']);
     }
-}
 
     public function incrementClick(Property $property)
     {
         $property->increment('clicks_count');
         return response()->json(['success' => true]);
     }
+}
