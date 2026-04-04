@@ -21,12 +21,8 @@ const routes = [
     { path: '/dashboard', name: 'customer-dashboard', component: CustomerDashboard },
     { path: '/admin/content', name: 'admin-content', component: AdminContentManager },
     { path: '/list-property', name: 'list-property', component: PropertySubmission },
-    { path: '/admin/moderation', name: 'admin-moderation', component: AdminModeration }
-    },
-    {
-        path: '/compare',
-        name: 'compare',
-        component: CompareView
+    { path: '/admin/moderation', name: 'admin-moderation', component: AdminModeration },
+    { path: '/compare', name: 'compare', component: CompareView }
 ];
 
 export default createRouter({
