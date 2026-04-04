@@ -6,7 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $fillable = ['name', 'email', 'password', 'role', 'profile_data'];
+    protected $fillable = ['name', 'email', 'password', 'role', 'profile_data', 'is_verified', 'saved_searches'];
     protected $hidden = ['password', 'remember_token'];
     protected $casts = ['email_verified_at' => 'datetime', 'password' => 'hashed', 'profile_data' => 'array'];
     public function properties() { return $this->hasMany(Property::class, 'owner_id'); }
