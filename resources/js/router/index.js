@@ -17,12 +17,8 @@ const routes = [
     { path: '/admin', name: 'admin-dashboard', component: AdminDashboard },
     { path: '/agent', name: 'agent-dashboard', component: AgentDashboard },
     { path: '/dashboard', name: 'customer-dashboard', component: CustomerDashboard },
-    { path: '/admin/content', name: 'admin-content', component: AdminContentManager }
-    },
-    {
-        path: '/list-property',
-        name: 'list-property',
-        component: PropertySubmission
+    { path: '/admin/content', name: 'admin-content', component: AdminContentManager },
+    { path: '/list-property', name: 'list-property', component: PropertySubmission }
 ];
 
 export default createRouter({
