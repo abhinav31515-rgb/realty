@@ -6,6 +6,7 @@ class DatabaseSeeder extends Seeder {
         $this->call([
             UserRoleSeeder::class,
             LuxuryPropertySeeder::class,
+            ContentSeeder::class,
         ]);
     }
 }
