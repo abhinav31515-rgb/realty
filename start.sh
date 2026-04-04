@@ -2,6 +2,7 @@
 set -e
 echo "Running migrations..."
 php artisan migrate --force || echo "Migration failed, continuing..."
+php artisan storage:link
 if [ "$RUN_SEEDER" = "true" ]; then
     echo "Seeding database..."
     php artisan db:seed --force || echo "Seeding failed, continuing..."
