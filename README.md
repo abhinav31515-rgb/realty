@@ -19,6 +19,14 @@ A commercial-grade, luxury real estate platform built with Laravel 11, Vue.js 3,
 - **Payments:** Stripe (Integration Ready)
 - **Deployment:** Render (Docker / Nginx / Supervisor)
 
+## 📖 Documentation
+
+Comprehensive guides are available in the `docs/` directory:
+- [Architecture](./docs/architecture.md)
+- [Developer Setup](./docs/setup.md)
+- [API & Database Reference](./docs/api_and_database.md)
+- [Deployment Guide](./docs/deployment.md)
+
 ## 🚀 Getting Started
 
 1. Clone the repository.
