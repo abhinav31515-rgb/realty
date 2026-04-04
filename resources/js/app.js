@@ -1,7 +1,8 @@
 import './bootstrap';
 import { createApp } from 'vue';
-import LandingPage from './components/LandingPage.vue';
+import router from './router';
+import App from './App.vue';
 
-const app = createApp({});
-app.component('landing-page', LandingPage);
+const app = createApp(App);
+app.use(router);
 app.mount('#app');
