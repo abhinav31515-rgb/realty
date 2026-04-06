@@ -54,3 +54,11 @@ LuxeEstate uses a unified architecture where **Supabase** serves as the primary 
 | **PostgreSQL** | db.cuqxtobrrpgrvcnstais.supabase.co |
 | **Real-time** | cuqxtobrrpgrvcnstais.supabase.co |
 | **Storage** | bucket: properties (S3 Compatible) |
+
+## 🎨 UI System (Notifications)
+To trigger a notification in any component:
+```javascript
+import { inject } from 'vue';
+const notify = inject('notify');
+notify('Your message here', 'success', 'Title');
+```

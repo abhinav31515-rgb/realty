@@ -26,3 +26,13 @@ The platform adheres to a custom 'Brutalist-Luxe' aesthetic:
 2.  **Stripe Checkout:** Prepared for luxury deposits and featured listing payments.
 3.  **Mapbox:** Powers the spatial exploration and locality insights (nearby amenities).
 4.  **Render:** Automated CI/CD deployment via Docker containers.
+
+## 🛡 Security & Hardening
+- **RBAC Policies:** Laravel Policies enforce strictly defined access rules for all property and booking operations.
+- **Rate Limiting:** Global and route-specific throttling prevents API abuse.
+- **Input Validation:** Dedicated Form Requests decouple validation logic from controllers.
+
+## ⚡ Performance Optimization
+- **Lazy Loading:** Vue routes utilize dynamic imports to minimize initial bundle size.
+- **KPI Caching:** Expensive dashboard metrics are cached for high-concurrency performance.
+- **Relational Indexing:** Optimized PostgreSQL indexes for search and relationship traversing.
