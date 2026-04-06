@@ -16,23 +16,34 @@ class WebhookController extends Controller {
         $sigHeader = $request->header('Stripe-Signature');
         $endpointSecret = config('services.stripe.webhook_secret') ?? env('STRIPE_WEBHOOK_SECRET');
 
+        // STRICT: Fail closed in non-local environments if secret is missing
+        if (!$endpointSecret && !app()->isLocal() && !app()->runningUnitTests()) {
+            Log::critical("SECURITY ALERT: Stripe Webhook Secret is missing in production/staging environment.");
+            return response()->json(['error' => 'Webhook service misconfigured'], 500);
+        }
+
         try {
-            // Production Security: Verify the Stripe Signature
             if ($endpointSecret) {
                 $event = Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
             } else {
+                // Local/Testing fallback only
                 $event = json_decode($payload, true);
             }
         } catch (SignatureVerificationException $e) {
             Log::error("Stripe Webhook Signature Failed: {$e->getMessage()}");
             return response()->json(['error' => 'Invalid signature'], 400);
+        } catch (\Exception $e) {
+            Log::error("Stripe Webhook Error: {$e->getMessage()}");
+            return response()->json(['error' => 'Internal server error'], 500);
         }
 
         $type = $event['type'] ?? ($event->type ?? null);
-        Log::info("Stripe Webhook Received: {$type}");
-
         $object = $event['data']['object'] ?? ($event->data->object ?? null);
         
+        if (!$type || !$object) {
+            return response()->json(['error' => 'Invalid payload'], 400);
+        }
+
         switch ($type) {
             case 'checkout.session.completed':
                 $this->handleCheckoutCompleted($object);
@@ -61,7 +72,7 @@ class WebhookController extends Controller {
                 ]);
 
                 $payment->booking->update(['status' => 'confirmed']);
-                Log::info("Payment confirmed for Booking UUID: {$bookingUuid}");
+                Log::info("Payment confirmed via Webhook for Booking: {$bookingUuid}");
             }
         });
     }
@@ -71,7 +82,7 @@ class WebhookController extends Controller {
         $payment = Payment::where('stripe_session_id', $sessionId)->first();
         if ($payment) {
             $payment->update(['status' => 'failed']);
-            Log::warning("Payment failed for Booking ID: {$payment->booking_id}");
+            Log::warning("Payment failed via Webhook for Booking ID: {$payment->booking_id}");
         }
     }
 }
