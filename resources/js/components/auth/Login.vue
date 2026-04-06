@@ -40,7 +40,7 @@
 import { reactive, ref } from 'vue';
 import { inject } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import api from '../../../api';
 
 const router = useRouter();
 const notify = inject('notify');
@@ -53,7 +53,7 @@ const form = reactive({
 const handleLogin = async () => {
   loading.value = true;
   try {
-    const response = await axios.post('/api/login', form);
+    const response = await api.post('/login', form);
     localStorage.setItem('auth_token', response.data.token);
     notify('Welcome to the collection.', 'success', 'Identity');
     router.push({ name: 'home' });

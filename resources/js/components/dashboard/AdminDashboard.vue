@@ -59,7 +59,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '../../../api';
 
 const stats = ref({});
 const bookings = ref([]);
@@ -68,8 +68,8 @@ const fetchData = async () => {
   const token = localStorage.getItem('auth_token');
   try {
     const [sResp, bResp] = await Promise.all([
-      axios.get('/api/dashboard/stats', { headers: { Authorization: `Bearer ${token}` } }),
-      axios.get('/api/bookings', { headers: { Authorization: `Bearer ${token}` } })
+      api.get('/dashboard/stats', { headers: { Authorization: `Bearer ${token}` } }),
+      api.get('/bookings', { headers: { Authorization: `Bearer ${token}` } })
     ]);
     stats.value = sResp.data;
     bookings.value = bResp.data;
@@ -81,7 +81,7 @@ const fetchData = async () => {
 const updateStatus = async (id, status) => {
   const token = localStorage.getItem('auth_token');
   try {
-    await axios.patch(`/api/bookings/${id}`, { status }, { headers: { Authorization: `Bearer ${token}` } });
+    await api.patch(`/bookings/${id}`, { status }, { headers: { Authorization: `Bearer ${token}` } });
     fetchData();
   } catch (error) {
     alert('Failed to update status');

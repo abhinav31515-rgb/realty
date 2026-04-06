@@ -53,7 +53,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '../../../api';
 import Navbar from '../layout/Navbar.vue';
 import PropertyCard from '../property/PropertyCard.vue';
 
@@ -64,8 +64,8 @@ const fetchData = async () => {
   const token = localStorage.getItem('auth_token');
   try {
     const [fResp, bResp] = await Promise.all([
-      axios.get('/api/favorites', { headers: { Authorization: `Bearer ${token}` } }),
-      axios.get('/api/bookings', { headers: { Authorization: `Bearer ${token}` } })
+      api.get('/favorites', { headers: { Authorization: `Bearer ${token}` } }),
+      api.get('/bookings', { headers: { Authorization: `Bearer ${token}` } })
     ]);
     favorites.value = fResp.data;
     bookings.value = bResp.data;
@@ -77,7 +77,7 @@ const fetchData = async () => {
 const cancelBooking = async (id) => {
   const token = localStorage.getItem('auth_token');
   try {
-    await axios.patch(`/api/bookings/${id}`, { status: 'cancelled' }, { headers: { Authorization: `Bearer ${token}` } });
+    await api.patch(`/bookings/${id}`, { status: 'cancelled' }, { headers: { Authorization: `Bearer ${token}` } });
     fetchData();
   } catch (error) {
     alert('Could not cancel booking');

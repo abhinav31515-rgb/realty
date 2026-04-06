@@ -48,7 +48,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import axios from 'axios';
+import api from '../../../api';
 
 const contentType = ref('guide');
 const contentItems = ref([]);
@@ -57,7 +57,7 @@ const form = ref({ title: '', slug: '', body: '' });
 
 const fetchContent = async () => {
   try {
-    const response = await axios.get(`/api/content?type=${contentType.value}`);
+    const response = await api.get(`/content?type=${contentType.value}`);
     contentItems.value = response.data;
   } catch (error) {
     console.error('Error fetching content:', error);
@@ -72,7 +72,7 @@ const openCreateModal = () => {
 const saveContent = async () => {
   try {
     const token = localStorage.getItem('auth_token');
-    await axios.post('/api/content', { ...form.value, type: contentType.value }, {
+    await api.post('/content', { ...form.value, type: contentType.value }, {
         headers: { Authorization: `Bearer ${token}` }
     });
     showModal.value = false;

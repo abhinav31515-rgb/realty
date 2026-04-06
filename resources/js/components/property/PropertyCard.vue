@@ -26,7 +26,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import api from '../../../api';
 
 const props = defineProps({
   id: Number,
@@ -45,7 +45,7 @@ const isFavorited = ref(false);
 
 const goToDetail = () => {
     // Record click for analytics
-    axios.post(`/api/properties/${props.id}/click`);
+    api.post(`/properties/${props.id}/click`);
     if (props.id) router.push({ name: 'property-detail', params: { id: props.id } });
 };
 
@@ -60,10 +60,10 @@ const toggleFavorite = async () => {
   if (!token) { router.push({ name: 'login' }); return; }
   try {
     if (isFavorited.value) {
-      await axios.delete(`/api/favorites/${props.id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await api.delete(`/favorites/${props.id}`, { headers: { Authorization: `Bearer ${token}` } });
       isFavorited.value = false;
     } else {
-      await axios.post('/api/favorites', { property_id: props.id }, { headers: { Authorization: `Bearer ${token}` } });
+      await api.post('/favorites', { property_id: props.id }, { headers: { Authorization: `Bearer ${token}` } });
       isFavorited.value = true;
     }
   } catch (error) { console.error(error); }

@@ -89,7 +89,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import api from '../../../api';
 
 const step = ref(1);
 const router = useRouter();
@@ -108,7 +108,7 @@ const form = reactive({
 const submitListing = async () => {
   const token = localStorage.getItem('auth_token');
   try {
-    await axios.post('/api/properties', { ...form, status: 'pending' }, {
+    await api.post('/properties', { ...form, status: 'pending' }, {
       headers: { Authorization: `Bearer ${token}` }
     });
     alert('Property submitted for architectural review.');

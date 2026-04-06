@@ -31,14 +31,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '../../../api';
 
 const pendingProperties = ref([]);
 
 const fetchPending = async () => {
   const token = localStorage.getItem('auth_token');
   try {
-    const response = await axios.get('/api/properties?status=pending', {
+    const response = await api.get('/properties?status=pending', {
       headers: { Authorization: `Bearer ${token}` }
     });
     // For simplicity, using client-side filter if backend filter not fully ready
@@ -50,7 +50,7 @@ const fetchPending = async () => {
 
 const approve = async (id) => {
   const token = localStorage.getItem('auth_token');
-  await axios.put(`/api/properties/${id}`, { status: 'active' }, {
+  await api.put(`/properties/${id}`, { status: 'active' }, {
     headers: { Authorization: `Bearer ${token}` }
   });
   fetchPending();
@@ -58,7 +58,7 @@ const approve = async (id) => {
 
 const reject = async (id) => {
   const token = localStorage.getItem('auth_token');
-  await axios.put(`/api/properties/${id}`, { status: 'rejected' }, {
+  await api.put(`/properties/${id}`, { status: 'rejected' }, {
     headers: { Authorization: `Bearer ${token}` }
   });
   fetchPending();

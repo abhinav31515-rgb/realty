@@ -81,7 +81,7 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import api from '../../../api';
 import Navbar from '../layout/Navbar.vue';
 
 const route = useRoute();
@@ -105,14 +105,14 @@ const handleBooking = async () => {
   if (!token) { router.push({ name: 'login' }); return; }
   bookingLoading.value = true;
   try {
-    await axios.post('/api/bookings', { property_id: property.value.id, scheduled_at: bookingForm.date }, { headers: { Authorization: `Bearer ${token}` } });
+    await api.post('/bookings', { property_id: property.value.id, scheduled_at: bookingForm.date }, { headers: { Authorization: `Bearer ${token}` } });
     bookingSuccess.value = true;
   } catch (error) { alert('Failed to request showing.'); } finally { bookingLoading.value = false; }
 };
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`/api/properties/${route.params.id}`);
+    const response = await api.get(`/properties/${route.params.id}`);
     property.value = response.data;
   } catch (error) { console.error(error); }
 });
