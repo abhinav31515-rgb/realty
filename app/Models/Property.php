@@ -38,11 +38,11 @@ class Property extends Model {
         return $category ? $query->where('listing_category', $category) : $query;
     }
 
-    public function owner() {
+    public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function bookings() {
+    public function bookings(): \Illuminate\Database\Eloquent\Relations\HasMany {
         return $this->hasMany(Booking::class);
     }
 }

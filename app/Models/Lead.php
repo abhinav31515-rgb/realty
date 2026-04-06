@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class Lead extends Model {
     use HasFactory;
     protected $fillable = ['property_id', 'customer_id', 'status', 'notes'];
+    protected $casts = ['status' => \App\Enums\LeadStatus::class];
     public function property() { return $this->belongsTo(Property::class); }
     public function customer() { return $this->belongsTo(User::class, 'customer_id'); }
 }
