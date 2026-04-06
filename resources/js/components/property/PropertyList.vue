@@ -68,7 +68,7 @@
 
 <script setup>
 import { ref, onMounted, reactive, watch } from 'vue';
-import axios from 'axios';
+import api from '../../api';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Navbar from '../layout/Navbar.vue';
@@ -89,7 +89,7 @@ const filters = reactive({
 const fetchProperties = async () => {
   loading.value = true;
   try {
-    const response = await axios.get('/api/properties', {
+    const response = await api.get('/api/properties', {
       params: {
         location: filters.location,
         type: filters.types.join(','),
