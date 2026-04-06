@@ -2,9 +2,9 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 class Property extends Model {
-    use SoftDeletes;
-    use HasFactory;
+    use SoftDeletes, HasFactory;
     protected $fillable = ['owner_id', 'title', 'description', 'type', 'location', 'price', 'images', 'status', 'metadata', 'is_featured', 'listing_category', 'bhk_count', 'total_area', 'furnishing_status', 'possession_status', 'posted_by', 'tags', 'views_count', 'clicks_count'];
     protected $casts = ['images' => 'array', 'metadata' => 'array', 'is_featured' => 'boolean'];
     public function owner() { return $this->belongsTo(User::class, 'owner_id'); }
