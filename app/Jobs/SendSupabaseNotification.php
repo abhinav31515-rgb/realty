@@ -11,6 +11,6 @@ class SendSupabaseNotification implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public function __construct(public int $userId, public string $message, public string $type) {}
     public function handle(SupabaseService $service): void {
-        $service.notify($this->userId, $this->message, $this->type);
+        $service->notify($this->userId, $this->message, $this->type);
     }
 }
