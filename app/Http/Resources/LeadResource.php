@@ -14,6 +14,14 @@ class LeadResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'status' => $this->status,
+            'metadata' => $this->metadata ?? [],
+            'property' => new PropertyResource($this->whenLoaded('property')),
+            'customer' => new UserResource($this->whenLoaded('customer')),
+            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
+        ];
     }
 }

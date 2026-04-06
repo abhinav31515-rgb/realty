@@ -7,22 +7,38 @@ use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Stripe\Webhook;
+use Stripe\Exception\SignatureVerificationException;
 
 class WebhookController extends Controller {
     public function handleStripe(Request $request) {
-        $event = $request->all();
-        $type = $event['type'] ?? null;
+        $payload = $request->getContent();
+        $sigHeader = $request->header('Stripe-Signature');
+        $endpointSecret = config('services.stripe.webhook_secret') ?? env('STRIPE_WEBHOOK_SECRET');
 
-        Log::info("Stripe Webhook Received: {$type}", ['event' => $event]);
+        try {
+            // Production Security: Verify the Stripe Signature
+            if ($endpointSecret) {
+                $event = Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
+            } else {
+                $event = json_decode($payload, true);
+            }
+        } catch (SignatureVerificationException $e) {
+            Log::error("Stripe Webhook Signature Failed: {$e->getMessage()}");
+            return response()->json(['error' => 'Invalid signature'], 400);
+        }
 
+        $type = $event['type'] ?? ($event->type ?? null);
+        Log::info("Stripe Webhook Received: {$type}");
+
+        $object = $event['data']['object'] ?? ($event->data->object ?? null);
+        
         switch ($type) {
             case 'checkout.session.completed':
-                $session = $event['data']['object'];
-                $this->handleCheckoutCompleted($session);
+                $this->handleCheckoutCompleted($object);
                 break;
             case 'payment_intent.payment_failed':
-                $session = $event['data']['object'];
-                $this->handlePaymentFailed($session);
+                $this->handlePaymentFailed($object);
                 break;
         }
 
@@ -30,11 +46,13 @@ class WebhookController extends Controller {
     }
 
     protected function handleCheckoutCompleted($session) {
-        $sessionId = $session['id'];
+        $sessionId = $session['id'] ?? null;
+        $bookingUuid = $session['client_reference_id'] ?? ($session['metadata']['booking_uuid'] ?? null);
 
-        DB::transaction(function () use ($sessionId) {
-            // Check for idempotency: if already paid, skip
-            $payment = Payment::where('stripe_session_id', $sessionId)->lockForUpdate()->first();
+        DB::transaction(function () use ($sessionId, $bookingUuid) {
+            $payment = Payment::where('stripe_session_id', $sessionId)
+                ->lockForUpdate()
+                ->first();
             
             if ($payment && $payment->status !== 'paid') {
                 $payment->update([
@@ -43,13 +61,13 @@ class WebhookController extends Controller {
                 ]);
 
                 $payment->booking->update(['status' => 'confirmed']);
-                Log::info("Payment confirmed for Booking ID: {$payment->booking_id}");
+                Log::info("Payment confirmed for Booking UUID: {$bookingUuid}");
             }
         });
     }
 
     protected function handlePaymentFailed($session) {
-        $sessionId = $session['id'];
+        $sessionId = $session['id'] ?? null;
         $payment = Payment::where('stripe_session_id', $sessionId)->first();
         if ($payment) {
             $payment->update(['status' => 'failed']);

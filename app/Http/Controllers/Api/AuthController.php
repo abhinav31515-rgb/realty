@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Jobs\SendWelcomeEmail;
@@ -18,14 +19,14 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'string|in:admin,agent,customer',
         ]);
 
+        // Security: Roles are NEVER self-assigned from public API. Default to CUSTOMER.
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'customer',
+            'role' => UserRole::CUSTOMER,
         ]);
 
         SendWelcomeEmail::dispatch($user);
