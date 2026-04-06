@@ -6,9 +6,11 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 15, 2);
-            $table->string('status')->default('pending');
+            $table->string('status')->default('pending'); // pending, paid, failed
+            $table->string('stripe_session_id')->nullable()->index();
             $table->string('payment_method')->nullable();
             $table->timestamps();
         });

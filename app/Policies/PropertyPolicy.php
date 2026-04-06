@@ -4,9 +4,9 @@ use App\Models\Property;
 use App\Models\User;
 class PropertyPolicy {
     public function update(User $user, Property $property): bool {
-        return $user->id === $property->owner_id || $user->role === 'admin';
+        return $user->id === $property->owner_id || $user->role === \App\Enums\UserRole::ADMIN;
     }
     public function delete(User $user, Property $property): bool {
-        return $user->id === $property->owner_id || $user->role === 'admin';
+        return $user->id === $property->owner_id || $user->role === \App\Enums\UserRole::ADMIN;
     }
 }

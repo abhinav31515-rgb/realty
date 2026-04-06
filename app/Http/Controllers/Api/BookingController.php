@@ -9,9 +9,11 @@ use App\Jobs\SendShowingRequestEmail;
 use App\Jobs\SendSupabaseNotification;
 use App\Models\Booking;
 use App\Models\Property;
+use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller {
     public function index(Request $request): AnonymousResourceCollection {
@@ -28,20 +30,28 @@ class BookingController extends Controller {
     }
 
     public function store(StoreBookingRequest $request): BookingResource {
-        $property = Property::findOrFail($request->property_id);
+        return DB::transaction(function () use ($request) {
+            $property = Property::findOrFail($request->property_id);
 
-        $booking = Booking::create([
-            'property_id' => $property->id,
-            'customer_id' => $request->user()->id,
-            'agent_id' => $property->owner_id,
-            'scheduled_at' => $request->scheduled_at,
-            'status' => 'pending',
-        ]);
+            // Create lead automatically upon booking
+            Lead::firstOrCreate([
+                'property_id' => $property->id,
+                'customer_id' => $request->user()->id,
+            ]);
 
-        SendSupabaseNotification::dispatch($property->owner_id, "New showing request for {$property->title}", "booking");
-        SendShowingRequestEmail::dispatch($booking);
+            $booking = Booking::create([
+                'property_id' => $property->id,
+                'customer_id' => $request->user()->id,
+                'agent_id' => $property->owner_id,
+                'scheduled_at' => $request->scheduled_at,
+                'status' => 'pending',
+            ]);
 
-        return new BookingResource($booking->load(['property', 'customer', 'agent']));
+            SendSupabaseNotification::dispatch($property->owner_id, "New showing request for {$property->title}", "booking");
+            SendShowingRequestEmail::dispatch($booking);
+
+            return new BookingResource($booking->load(['property', 'customer', 'agent']));
+        });
     }
 
     public function updateStatus(Request $request, Booking $booking): BookingResource {

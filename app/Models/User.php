@@ -15,6 +15,8 @@ class User extends Authenticatable {
 
     protected $hidden = ['password', 'remember_token'];
 
+    protected static function booted() { static::creating(function ($user) { if (!$user->uuid) $user->uuid = (string) \Illuminate\Support\Str::uuid(); }); }
+
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -26,6 +28,10 @@ class User extends Authenticatable {
 
     public function properties(): HasMany {
         return $this->hasMany(Property::class, 'owner_id');
+    }
+
+    public function leads(): HasMany {
+        return $this->hasMany(Lead::class, "customer_id");
     }
 
     public function bookings(): HasMany {

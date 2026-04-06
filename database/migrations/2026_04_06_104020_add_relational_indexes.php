@@ -15,7 +15,14 @@ return new class extends Migration {
         });
     }
     public function down(): void {
-        Schema::table('bookings', function (Blueprint $table) { $table->dropIndex(['property_id', 'customer_id', 'agent_id']); });
-        Schema::table('leads', function (Blueprint $table) { $table->dropIndex(['property_id', 'customer_id']); });
+        Schema::table('bookings', function (Blueprint $table) { 
+            $table->dropIndex(['property_id']);
+            $table->dropIndex(['customer_id']);
+            $table->dropIndex(['agent_id']);
+        });
+        Schema::table('leads', function (Blueprint $table) { 
+            $table->dropIndex(['property_id']);
+            $table->dropIndex(['customer_id']);
+        });
     }
 };
