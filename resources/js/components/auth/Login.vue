@@ -38,10 +38,12 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
+import { inject } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const router = useRouter();
+const notify = inject('notify');
 const loading = ref(false);
 const form = reactive({
   email: '',
@@ -53,9 +55,10 @@ const handleLogin = async () => {
   try {
     const response = await axios.post('/api/login', form);
     localStorage.setItem('auth_token', response.data.token);
+    notify('Welcome to the collection.', 'success', 'Identity');
     router.push({ name: 'home' });
   } catch (error) {
-    alert('Authentication failed. Please check your credentials.');
+    notify('Authentication failed. Please check your credentials.', 'error', 'Security');
   } finally {
     loading.value = false;
   }
