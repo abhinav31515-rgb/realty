@@ -2,22 +2,23 @@
 
 ## Architecture: Senior-Grade Hardened Laravel + Supabase
 
-### 1. Database & Infrastructure
-- **Supabase-First**: Use the remote Supabase project for Auth, DB, Storage, and Real-time.
-- **UUIDs**: All public-facing models (`Property`, `Booking`, `User`, `Payment`) MUST use UUIDs for route model binding. Use the `uuid` column and define `getRouteKeyName()`.
+### 1. Security & Identity
+- **Fail-Closed Integration**: Stripe session creation and webhooks MUST fail closed if API keys or secrets are missing in non-local environments.
+- **Role Isolation**: Roles are NEVER self-assigned. All registrations default to CUSTOMER.
+- **UUIDs**: All public-facing models (`Property`, `Booking`, `User`, `Payment`) MUST use UUIDs for route model binding. 
 - **Soft Deletes**: Always implement `SoftDeletes` for business-critical models like `Property` and `Booking`.
 
 ### 2. Backend Standards
 - **Enums**: Use PHP Enums (`App\Enums\*`) for all roles and statuses. Avoid string literals in logic.
 - **Service Layer**: Decouple logic from controllers. Use `PropertyService` for media/disk and `SupabaseService` for external integration.
-- **FormRequests & Resources**: Use strict validation in `FormRequest` classes and standardized JSON in `JsonResource` classes.
-- **Policies**: Enforce authorization using `Gate::authorize()` or `$this->authorize()` in controllers, backed by `ModelPolicy` classes.
+- **Standardized API**: Use strict `FormRequest` validation and explicit `JsonResource` contracts for all outputs to prevent data leakage.
 
 ### 3. Payments (Stripe)
-- **Status Persistence**: Always track payment status in the `Payment` model.
-- **Webhook Reliability**: The Stripe webhook (`WebhookController`) MUST handle idempotency and be outside the `throttle:api` middleware group.
-- **Transitions**: State transitions for `Booking` MUST be triggered by verified webhook events.
+- **Stripe SDK**: Always use the official Stripe SDK. Metadata MUST include `booking_uuid` for reconciliation.
+- **Webhook Security**: Webhooks MUST implement signature verification.
+- **Status Persistence**: Track all payment states (`pending`, `paid`, `failed`) in the `Payment` model.
 
-### 4. Testing
-- **Feature-First**: New features MUST include a `tests/Feature/Api` test class.
-- **SQLite Support**: Ensure migrations and tests are compatible with in-memory SQLite for CI/CD speed.
+### 4. CI/CD & Testing
+- **Feature Tests**: New features MUST have corresponding `tests/Feature/Api` tests.
+- **Test Parity**: Ensure `public/build/manifest.json` is present for tests to avoid boot failures.
+- **SQLite Compatibility**: Keep migrations compatible with in-memory SQLite for rapid testing.
