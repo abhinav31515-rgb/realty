@@ -21,6 +21,7 @@ class Property extends Model {
         'images' => 'array',
         'metadata' => 'array',
         'is_featured' => 'boolean',
+        'status' => \App\Enums\PropertyStatus::class,
         'price' => 'decimal:2',
         'total_area' => 'decimal:2',
     ];
