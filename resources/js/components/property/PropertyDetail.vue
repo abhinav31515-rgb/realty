@@ -81,7 +81,7 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import api from '../../../api';
+import api from '../../api';
 import Navbar from '../layout/Navbar.vue';
 
 const route = useRoute();

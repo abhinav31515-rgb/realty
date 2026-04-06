@@ -40,7 +40,7 @@
 import { reactive, ref } from 'vue';
 import { inject } from 'vue';
 import { useRouter } from 'vue-router';
-import api from '../../../api';
+import api from '../../api';
 
 const router = useRouter();
 const notify = inject('notify');

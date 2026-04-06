@@ -53,7 +53,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import api from '../../../api';
+import api from '../../api';
 import Navbar from '../layout/Navbar.vue';
 import PropertyCard from '../property/PropertyCard.vue';
 

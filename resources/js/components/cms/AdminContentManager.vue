@@ -48,7 +48,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import api from '../../../api';
+import api from '../../api';
 
 const contentType = ref('guide');
 const contentItems = ref([]);
