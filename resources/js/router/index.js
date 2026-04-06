@@ -1,15 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LandingPage from '../components/LandingPage.vue';
-import PropertyList from '../components/property/PropertyList.vue';
-import PropertyDetail from '../components/property/PropertyDetail.vue';
-import Login from '../components/auth/Login.vue';
-import AdminDashboard from '../components/dashboard/AdminDashboard.vue';
-import AgentDashboard from '../components/dashboard/AgentDashboard.vue';
-import CustomerDashboard from '../components/dashboard/CustomerDashboard.vue';
-import AdminContentManager from '../components/cms/AdminContentManager.vue';
-import PropertySubmission from '../components/property/PropertySubmission.vue';
-import AdminModeration from '../components/dashboard/AdminModeration.vue';
-import CompareView from '../components/property/CompareView.vue';
+
+// Implement Dynamic Imports (Lazy Loading) to improve initial load time
+const LandingPage = () => import('../components/LandingPage.vue');
+const PropertyList = () => import('../components/property/PropertyList.vue');
+const PropertyDetail = () => import('../components/property/PropertyDetail.vue');
+const Login = () => import('../components/auth/Login.vue');
+const AdminDashboard = () => import('../components/dashboard/AdminDashboard.vue');
+const AgentDashboard = () => import('../components/dashboard/AgentDashboard.vue');
+const CustomerDashboard = () => import('../components/dashboard/CustomerDashboard.vue');
+const AdminContentManager = () => import('../components/cms/AdminContentManager.vue');
+const PropertySubmission = () => import('../components/property/PropertySubmission.vue');
+const AdminModeration = () => import('../components/dashboard/AdminModeration.vue');
+const CompareView = () => import('../components/property/CompareView.vue');
 
 const routes = [
     { path: '/', name: 'home', component: LandingPage },
