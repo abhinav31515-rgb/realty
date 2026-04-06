@@ -8,4 +8,6 @@ if [ "$RUN_SEEDER" = "true" ]; then
     php artisan db:seed --force || echo "Seeding failed, continuing..."
 fi
 echo "Starting Supervisor..."
+# Note: In production, we typically use a separate container or program for the queue.
+# I will add it to supervisord config instead.
 exec /usr/bin/supervisord -c /etc/supervisord.conf

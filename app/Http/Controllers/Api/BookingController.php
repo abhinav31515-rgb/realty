@@ -5,22 +5,15 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Resources\BookingResource;
-use App\Mail\ShowingRequestedMail;
+use App\Jobs\SendShowingRequestEmail;
+use App\Jobs\SendSupabaseNotification;
 use App\Models\Booking;
 use App\Models\Property;
-use App\Services\SupabaseService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller {
-    protected $supabase;
-
-    public function __construct(SupabaseService $supabase) {
-        $this->supabase = $supabase;
-    }
-
     public function index(Request $request): AnonymousResourceCollection {
         $user = $request->user();
         $query = Booking::with(['property', 'customer', 'agent']);
@@ -45,13 +38,8 @@ class BookingController extends Controller {
             'status' => 'pending',
         ]);
 
-        $this->supabase->notify($property->owner_id, "New showing request for {$property->title}", "booking");
-        
-        try {
-            Mail::to($booking->agent->email)->send(new ShowingRequestedMail($booking));
-        } catch (\Exception $e) {
-            \Log::error("Mail failed: " . $e->getMessage());
-        }
+        SendSupabaseNotification::dispatch($property->owner_id, "New showing request for {$property->title}", "booking");
+        SendShowingRequestEmail::dispatch($booking);
 
         return new BookingResource($booking->load(['property', 'customer', 'agent']));
     }
@@ -67,7 +55,7 @@ class BookingController extends Controller {
 
         $booking->update(['status' => $request->status]);
 
-        $this->supabase->notify($booking->customer_id, "Your showing for {$booking->property->title} is {$request->status}", "status_update");
+        SendSupabaseNotification::dispatch($booking->customer_id, "Your showing for {$booking->property->title} is {$request->status}", "status_update");
 
         return new BookingResource($booking->load(['property', 'customer', 'agent']));
     }
