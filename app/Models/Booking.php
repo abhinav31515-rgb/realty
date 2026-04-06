@@ -16,15 +16,15 @@ class Booking extends Model {
         'status' => 'string', // Could use Enum if preferred, but string with validation in Request is fine
     ];
 
-    public function property(): BelongsTo {
+    public function property(): \Illuminate\Database\Eloquent\Relations\BelongsTo: BelongsTo {
         return $this->belongsTo(Property::class);
     }
 
-    public function customer(): BelongsTo {
+    public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo: BelongsTo {
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    public function agent(): BelongsTo {
+    public function agent(): \Illuminate\Database\Eloquent\Relations\BelongsTo: BelongsTo {
         return $this->belongsTo(User::class, 'agent_id');
     }
 }

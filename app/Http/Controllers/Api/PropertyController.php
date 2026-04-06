@@ -28,10 +28,18 @@ class PropertyController extends Controller {
         }
 
         if ($request->type) {
-            $query->where('type', $request->type);
+            $query->whereIn('type', explode(',', $request->type));
         }
 
-        return PropertyResource::collection($query->paginate(15));
+        if ($request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        return PropertyResource::collection($query->paginate($request->per_page ?? 15));
     }
 
     public function store(StorePropertyRequest $request) {
@@ -51,7 +59,7 @@ class PropertyController extends Controller {
 
     public function show(Property $property) {
         $property->increment('views_count');
-        return new PropertyResource($property);
+        return new PropertyResource($property->load('owner'));
     }
 
     public function update(UpdatePropertyRequest $request, Property $property) {

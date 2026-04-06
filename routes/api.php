@@ -37,5 +37,6 @@ Route::prefix('v1')->group(function () {
         Route::post('/favorites', [FavoriteController::class, 'store']);
         Route::delete('/favorites/{property}', [FavoriteController::class, 'destroy']);
         Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+    Route::get('/leads', [LeadController::class, 'index']);
     });
 });
