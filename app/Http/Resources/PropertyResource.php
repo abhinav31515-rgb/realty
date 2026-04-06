@@ -2,6 +2,7 @@
 namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+
 class PropertyResource extends JsonResource {
     public function toArray(Request $request): array {
         return [
@@ -27,7 +28,7 @@ class PropertyResource extends JsonResource {
                 'clicks' => $this->clicks_count,
             ],
             'owner' => new UserResource($this->whenLoaded('owner')),
-            'created_at' => $this->created_at->toDateTimeString(),
+            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
         ];
     }
 }
