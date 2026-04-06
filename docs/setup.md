@@ -1,13 +1,12 @@
-# Developer Setup Guide
+# Developer Setup Guide (Supabase Unified)
 
-Follow these instructions to set up the LuxeEstate development environment locally.
+LuxeEstate uses a unified architecture where **Supabase** serves as the primary database, real-time engine, and media storage provider. This eliminates the need for local Docker or PostgreSQL installations.
 
 ## 📋 Prerequisites
 
 - **PHP 8.3+** & **Composer**
 - **Node.js 22+** & **NPM**
-- **PostgreSQL** (Recommended for full feature support)
-- **Supabase Account** (Required for real-time notifications and chat)
+- **Supabase Account** (Credentials provided in .env)
 
 ## 🚀 Local Installation
 
@@ -21,12 +20,7 @@ Follow these instructions to set up the LuxeEstate development environment local
     ```bash
     cp .env.example .env
     ```
-    Open `.env` and configure your local PostgreSQL database:
-    - `DB_HOST=127.0.0.1`
-    - `DB_PORT=5432`
-    - `DB_DATABASE=your_local_db_name`
-    - `DB_USERNAME=your_db_user`
-    - `DB_PASSWORD=your_db_password`
+    The `.env` is already pre-configured to connect to the Supabase cloud instance. Ensure you have the DB password.
 
 3.  **Application Initialization:**
     ```bash
@@ -35,36 +29,28 @@ Follow these instructions to set up the LuxeEstate development environment local
     php artisan storage:link
     ```
 
-4.  **Database Setup:**
-    ```bash
-    php artisan migrate --seed
-    ```
-
-5.  **Frontend Setup:**
+4.  **Frontend Setup:**
     ```bash
     npm install
     npm run build
     ```
 
-6.  **Run the Application:**
+5.  **Run the Application:**
     ```bash
     php artisan serve
     ```
+    The site will be available at `http://localhost:8000`.
 
-## 🛠 Troubleshooting (500 Errors)
+## 🛠 Unified Architecture Benefits
 
-If you encounter a 500 error:
-1.  **Check APP_KEY:** Ensure `php artisan key:generate` was run.
-2.  **Check Database:** Ensure your database is running and credentials in `.env` are correct.
-3.  **Check Logs:** View detailed error messages in `storage/logs/laravel.log`.
-4.  **Session/Cache:** If you change the `SESSION_DRIVER` to `database`, ensure you have run the migrations.
+- **Single Source of Truth:** Your local development and the production site on Render both connect to the same Supabase instance. Changes to data are reflected everywhere instantly.
+- **No Local DB Needed:** No need to install PostgreSQL or Docker on your machine.
+- **Real-time Ready:** Chat and notifications work out-of-the-box in the local environment.
 
-## 🔐 Core Environment Variables
+## 🔐 Core Credentials
 
-| Variable | Requirement | Description |
-| :--- | :--- | :--- |
-| `DB_CONNECTION` | Required | Set to `pgsql` for full compatibility. |
-| `SUPABASE_URL` | Required | Your Supabase project URL for Real-time features. |
-| `SUPABASE_ANON_KEY` | Required | Your Supabase public key. |
-| `STRIPE_SECRET` | Optional | Required for processing payments. |
-| `SUPABASE_STORAGE_ENDPOINT` | Required | S3-compatible endpoint for Supabase Storage. |
+| Service | Connection |
+| :--- | :--- |
+| **PostgreSQL** | db.cuqxtobrrpgrvcnstais.supabase.co |
+| **Real-time** | cuqxtobrrpgrvcnstais.supabase.co |
+| **Storage** | bucket: properties (S3 Compatible) |
