@@ -20,5 +20,6 @@
 
 ### 4. CI/CD & Testing
 - **Feature Tests**: New features MUST have corresponding `tests/Feature/Api` tests.
-- **Test Parity**: Ensure `public/build/manifest.json` is present for tests to avoid boot failures.
+- **Test Parity**: The environment must support Vite asset discovery (e.g. valid manifest in public/build).
 - **SQLite Compatibility**: Keep migrations compatible with in-memory SQLite for rapid testing.
+- **Deprecation Hygiene**: Ensure `config/database.php` is free of deprecated PDO constants (e.g. MySQL SSL CA) to maintain clean CI logs.
